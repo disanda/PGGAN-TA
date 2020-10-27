@@ -103,25 +103,25 @@ for epoch in range(10):
 	for i in range(5001):
 		z = torch.randn(batch_size, in_dim).to(device)
 #Training D
+		optimizerD.zero_grad()
 		with torch.no_grad():
 			x = netG2(z,depth=8,alpha=1)
 		z_ = netD2(x.detach(),height=8,alpha=1)
 		z_ = z_.squeeze(2).squeeze(2)
 		x_ = netG2(z_,depth=8,alpha=1)#通过G训练D
-		optimizerD.zero_grad()
 		loss_i = MSE_loss(x_,x)
 		loss_i.backward()
 		optimizerD.step()
 		lossD_all +=loss_i.item()
 		print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()))
 #Training G:
+		optimizerG.zero_grad()
 		z_dim = np.random.randint(in_dim)
 		z_2 =z
 		z_2[:,z_dim] = 0
 		x_2 = netG2(z_2,depth=8,alpha=1)
 		z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
-		optimizerG.zero_grad()
 		loss_j = CE_loss(z_d, torch.tensor(np.repeat(z_dim*1.0,batch_size)).long().to(device))
 		loss_j.backward()
 		optimizerG.step()
