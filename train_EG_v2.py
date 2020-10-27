@@ -124,8 +124,8 @@ for epoch in range(10):
 
 #Training G:
 		z_dim = np.random.randint(in_dim)
-		z_2 =z
-		z_2[:,z_dim] = 0
+		z_2 = torch.zeros(batch_size, in_dim).to(device)
+		z_2[:,z_dim] = 1
 		x_2 = netG2(z_2,depth=8,alpha=1)
 		z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
