@@ -123,7 +123,7 @@ for epoch in range(10):
 			z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
-		loss_j = CE_loss(z_d, z_dim)
+		loss_j = CE_loss(z_d, np.repeate(z_dim,batch_size))
 		loss_j.backward()
 		optimizerG.step()
 		lossG_all +=loss_i.item()
