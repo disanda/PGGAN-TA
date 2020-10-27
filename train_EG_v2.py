@@ -103,7 +103,7 @@ CE_loss = nn.CrossEntropyLoss()
 MSE_loss = nn.MSELoss()
 lossD_all=0
 lossG_all=0
-batch_size=12
+batch_size=10
 
 for epoch in range(10):
 	for i in range(5001):
