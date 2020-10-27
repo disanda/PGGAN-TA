@@ -103,7 +103,7 @@ CE_loss = nn.CrossEntropyLoss()
 MSE_loss = nn.MSELoss()
 lossD_all=0
 lossG_all=0
-batch_size=8
+batch_size=12
 
 for epoch in range(10):
 	for i in range(5001):
@@ -136,7 +136,7 @@ for epoch in range(10):
 		optimizerG.step()
 		lossG_all +=loss_j.item()
 		with open(resultPath+'/LossG.txt', 'w+') as f:
-			print('loss_all__:  '+str(lossG_all)+'     loss_j:    '+str(loss_j.item()))
+			print('loss_all__:  '+str(lossG_all)+'     loss_j:    '+str(loss_j.item()),file=f)
 #Inference
 		if i % 100 == 0: 
 			#测试重构
