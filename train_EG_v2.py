@@ -119,8 +119,7 @@ for epoch in range(10):
 		z_2 =z
 		z_2[:,z_dim] = 0
 		x_2 = netG2(z_2,depth=8,alpha=1)
-		with torch.no_grad():
-			z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
+		z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
 		loss_j = CE_loss(z_d, torch.tensor(np.repeat(z_dim*1.0,batch_size)).long().to(device))
