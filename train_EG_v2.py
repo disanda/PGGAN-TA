@@ -1,6 +1,7 @@
 #这个版本只需要导入网络即可(不需要导入训练网络)，先已完成两个实验，第一个实验完成gt编码的比较，第二个实验完成G(z)的编码比较
 #准备做 不同网络的比较，包括结构不同，weight不同的情况 (mnist中以上因素不同，区别不大)
 import torch
+import torch.nn as nn
 import numpy as np
 import os
 import torchvision
