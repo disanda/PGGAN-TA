@@ -14,7 +14,7 @@ from pro_gan_pytorch.DataTools import DatasetFromFolder
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # #----------------path setting---------------
-resultPath = "./result/RC_Training_GD_V2"
+resultPath = "./result/RC_Training_GD_V2_1"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -65,16 +65,24 @@ for i,j in netG2.named_parameters():
 	else:
 		j.requires_grad_(True)
 
-# x = torch.randn(1,3,1024,1024)
-# z = netD2(x,height=8,alpha=1)
-# z = z.squeeze(2).squeeze(2)
-# print(z.shape)
-# x_r = netG(z,depth=8,alpha=1)
-# print(x_r.shape)
+optimizerG = torch.optim.Adam(netG2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8,amsgrad=True)
+optimizerD = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8,amsgrad=True)
 
-# z = torch.randn(5,512)
-# x = (netG(z,depth=8,alpha=1)+1)/2
-# torchvision.utils.save_image(x, './recons.jpg', nrow=5)
+with open(resultPath+'/setting.txt', 'w') as f:
+	print('----',file=f)
+	print(G1,file=f)
+	print('----',file=f)
+	print(D1,file=f)
+	print('----',file=f)
+	print(G2,file=f)
+	print('----',file=f)
+	print(D2,file=f)
+	print('----',file=f)
+	print(optimizerG,file=f)
+	print('----',file=f)
+	print(optimizerD,file=f)
+	print('----',file=f)
+
 
 #------------------dataSet-----------
 # data_path='/_yucheng/dataSet/CelebAMask-HQ/CelebAMask-HQ/CelebA-HQ-img'
@@ -91,8 +99,6 @@ for i,j in netG2.named_parameters():
 #optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 import itertools
 #optimizer = torch.optim.Adam(itertools.chain(filter(lambda p: p.requires_grad, netG2.parameters()), filter(lambda p: p.requires_grad, netD2.parameters())),lr=0.0001,betas=(0.6, 0.95),amsgrad=True)
-optimizerG = torch.optim.Adam(netG2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8,amsgrad=True)
-optimizerD = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8,amsgrad=True)
 CE_loss = nn.CrossEntropyLoss()
 MSE_loss = nn.MSELoss()
 lossD_all=0
@@ -113,7 +119,9 @@ for epoch in range(10):
 		loss_i.backward()
 		optimizerD.step()
 		lossD_all +=loss_i.item()
-		print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()))
+		with open(resultPath+'/LossD.txt', 'w+') as f:
+			print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()),file=f)
+
 #Training G:
 		z_dim = np.random.randint(in_dim)
 		z_2 =z
@@ -123,10 +131,12 @@ for epoch in range(10):
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
 		loss_j = CE_loss(z_d, torch.tensor(np.repeat(z_dim*1.0,batch_size)).long().to(device))
+
 		loss_j.backward()
 		optimizerG.step()
-		lossG_all +=loss_i.item()
-		print('loss_all__:  '+str(lossG_all)+'     loss_j:    '+str(loss_j.item()))
+		lossG_all +=loss_j.item()
+		with open(resultPath+'/LossG.txt', 'w+') as f:
+			print('loss_all__:  '+str(lossG_all)+'     loss_j:    '+str(loss_j.item()))
 #Inference
 		if i % 100 == 0: 
 			#测试重构
@@ -134,12 +144,12 @@ for epoch in range(10):
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
 			temp = torch.linspace(-4,4,8)
-			z_2[:8,z_dim] = temp
 			z_2_2=z_2
 			if z_dim+1 != in_dim:
 				z_2_2[:8,z_dim+1] = temp
 			else:
 				z_2_2[:8,0] = temp
+			z_2[:8,z_dim] = temp
 			with torch.no_grad():
 				img2_1 = netG2(z_2[:8],depth=8,alpha=1) 
 				img2_2 = netG2(z_2_2[:8],depth=8,alpha=1)
