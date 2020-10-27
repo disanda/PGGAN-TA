@@ -131,7 +131,6 @@ for epoch in range(10):
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
 		loss_j = CE_loss(z_d, torch.tensor(np.repeat(z_dim*1.0,batch_size)).long().to(device))
-
 		loss_j.backward()
 		optimizerG.step()
 		lossG_all +=loss_j.item()
