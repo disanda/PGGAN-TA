@@ -131,7 +131,7 @@ for epoch in range(10):
 		if i % 100 == 0: 
 			#测试重构
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
-			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
+			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
 			temp = torch.linspace(-4,4,8)
 			z_2[:8,z_dim] = temp
@@ -144,7 +144,7 @@ for epoch in range(10):
 				img2_1 = netG2(z_2[:8],depth=8,alpha=1) 
 				img2_2 = netG2(z_2_2[:8],depth=8,alpha=1)
 			img2 = (torch.cat((img2_1,img2_2))+1)/2
-			torchvision.utils.save_image(img2, resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
+			torchvision.utils.save_image(img2, resultPath1_1+'/ep%d_%d_dim.jpg'%(epoch,i), nrow=8)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG2.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
