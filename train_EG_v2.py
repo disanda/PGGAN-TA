@@ -136,7 +136,7 @@ for epoch in range(10):
 			temp = torch.linsapce(-4,4,8)
 			z_2[:8,z_dim] = temp
 			z_2_2=z_2
-			if z_dim+1 != in_dim
+			if z_dim+1 != in_dim:
 				z_2_2[:8,z_dim+1] = temp
 			else:
 				z_2_2[:8,0] = temp
