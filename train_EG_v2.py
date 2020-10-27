@@ -8,7 +8,7 @@ import torchvision
 from pro_gan_pytorch import  Encoder , Networks as net1
 import pro_gan_pytorch.AE as net2
 from pro_gan_pytorch.DataTools import DatasetFromFolder
-
+import tqdm
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -106,7 +106,7 @@ lossG_all=0
 batch_size=10
 
 for epoch in range(10):
-	for i in range(5001):
+	for i in tqdm.trange(5001):
 		z = torch.randn(batch_size, in_dim).to(device)
 #Training D
 		with torch.no_grad():
@@ -157,6 +157,7 @@ for epoch in range(10):
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG2.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
+	print('finish-ep%d'%epoch)
 
 
 #改进: D和E 分开训练
