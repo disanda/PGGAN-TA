@@ -116,6 +116,7 @@ for epoch in range(10):
 		print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()))
 #Training G:
 		z_dim = np.random.randint(in_dim)
+		z_2 =z
 		z_2[:,z_dim] = 0
 		x_2 = netG2(z_2,depth=8,alpha=1)
 		with torch.no_grad():
