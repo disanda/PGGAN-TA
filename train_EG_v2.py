@@ -70,13 +70,13 @@ optimizerD = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps
 
 with open(resultPath+'/setting.txt', 'w') as f:
 	print('----',file=f)
-	print(G1,file=f)
+	print(netG1,file=f)
 	print('----',file=f)
-	print(D1,file=f)
+	print(netD1,file=f)
 	print('----',file=f)
-	print(G2,file=f)
+	print(netG2,file=f)
 	print('----',file=f)
-	print(D2,file=f)
+	print(netD2,file=f)
 	print('----',file=f)
 	print(optimizerG,file=f)
 	print('----',file=f)
