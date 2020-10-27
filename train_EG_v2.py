@@ -106,10 +106,8 @@ for epoch in range(10):
 		with torch.no_grad():
 			x = netG2(z,depth=8,alpha=1)
 		z_ = netD2(x.detach(),height=8,alpha=1)
-		#z_ = netD2(x.detach()) #new_small_Net
 		z_ = z_.squeeze(2).squeeze(2)
-		with torch.no_grad():
-			x_ = netG2(z_,depth=8,alpha=1)
+		x_ = netG2(z_,depth=8,alpha=1)#通过G训练D
 		optimizerD.zero_grad()
 		loss_i = MSE_loss(x_,x)
 		loss_i.backward()
@@ -121,7 +119,7 @@ for epoch in range(10):
 		z_2[:,z_dim] = 0
 		x_2 = netG2(z_2,depth=8,alpha=1)
 		with torch.no_grad():
-			z_d = netD2(x_2.detach(),height=8,alpha=1)
+			z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
 		loss_j = CE_loss(z_d, z_dim)
