@@ -119,7 +119,7 @@ for epoch in range(10):
 		loss_i.backward()
 		optimizerD.step()
 		lossD_all +=loss_i.item()
-		with open(resultPath+'/LossD.txt', 'w+') as f:
+		with open(resultPath+'/LossD.txt', 'a+') as f:
 			print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 
 #Training G:
@@ -134,7 +134,7 @@ for epoch in range(10):
 		loss_j.backward()
 		optimizerG.step()
 		lossG_all +=loss_j.item()
-		with open(resultPath+'/LossG.txt', 'w+') as f:
+		with open(resultPath+'/LossG.txt', 'a+') as f:
 			print('loss_all__:  '+str(lossG_all)+'     loss_j:    '+str(loss_j.item()),file=f)
 #Inference
 		if i % 100 == 0: 
