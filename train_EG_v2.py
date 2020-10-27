@@ -133,7 +133,7 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			#测试解耦
-			temp = torch.linsapce(-4,4,8)
+			temp = torch.linspace(-4,4,8)
 			z_2[:8,z_dim] = temp
 			z_2_2=z_2
 			if z_dim+1 != in_dim:
