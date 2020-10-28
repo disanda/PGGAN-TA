@@ -14,7 +14,7 @@ import tqdm
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # #----------------path setting---------------
-resultPath = "./result/RC_Training_GD_V2_1"
+resultPath = "./result/RC_Training_GD_V3_1"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
