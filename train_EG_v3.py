@@ -123,14 +123,11 @@ for epoch in range(10):
 			print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 
 #Training G:
-		z_dim = np.random.randint(in_dim)
-		z_2 = torch.zeros(batch_size, in_dim).to(device)
-		z_2[:,z_dim] = 1
-		x_2 = netG2(z_2,depth=8,alpha=1)
-		z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
+		x = netG2(z,depth=8,alpha=1)
+		z_d = netD2(x.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
-		loss_j = CE_loss(z_d, torch.tensor(np.repeat(z_dim*1.0,batch_size)).long().to(device))
+		loss_j = MSE_loss(z_d,z)
 		loss_j.backward()
 		optimizerG.step()
 		lossG_all +=loss_j.item()
@@ -143,14 +140,15 @@ for epoch in range(10):
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
 			temp = torch.linspace(-4,4,8)
-			z_2_2=z_2
+			z_2_2=z
+			z_dim = np.random.randint(in_dim)
 			if z_dim+1 != in_dim:
 				z_2_2[:8,z_dim+1] = temp
 			else:
 				z_2_2[:8,0] = temp
-			z_2[:8,z_dim] = temp
+			z[:8,z_dim] = temp
 			with torch.no_grad():
-				img2_1 = netG2(z_2[:8],depth=8,alpha=1) 
+				img2_1 = netG2(z[:8],depth=8,alpha=1) 
 				img2_2 = netG2(z_2_2[:8],depth=8,alpha=1)
 			img2 = (torch.cat((img2_1,img2_2))+1)/2
 			torchvision.utils.save_image(img2, resultPath1_1+'/ep%d_%d_dim.jpg'%(epoch,i), nrow=8)
