@@ -141,7 +141,7 @@ for epoch in range(10):
 			#测试解耦
 			z2 = torch.rand((1, 512)).expand(8, 512)
 			temp = torch.linspace(-4,4,8)
-			z_2_2=z2
+			z_2_2=z2.clone()
 			z_dim = np.random.randint(in_dim)
 			if z_dim+1 != in_dim:
 				z_2_2[:8,z_dim+1] = temp
