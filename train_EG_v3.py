@@ -139,7 +139,7 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
-			z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num)
+			z2 = torch.rand((1, 512)).expand(8, 512)
 			temp = torch.linspace(-4,4,8)
 			z_2_2=z2
 			z_dim = np.random.randint(in_dim)
