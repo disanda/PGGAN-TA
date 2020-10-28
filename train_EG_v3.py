@@ -139,16 +139,17 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
+			z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num)
 			temp = torch.linspace(-4,4,8)
-			z_2_2=z
+			z_2_2=z2
 			z_dim = np.random.randint(in_dim)
 			if z_dim+1 != in_dim:
 				z_2_2[:8,z_dim+1] = temp
 			else:
 				z_2_2[:8,0] = temp
-			z[:8,z_dim] = temp
+			z2[:8,z_dim] = temp
 			with torch.no_grad():
-				img2_1 = netG2(z[:8],depth=8,alpha=1) 
+				img2_1 = netG2(z2[:8],depth=8,alpha=1) 
 				img2_2 = netG2(z_2_2[:8],depth=8,alpha=1)
 			img2 = (torch.cat((img2_1,img2_2))+1)/2
 			torchvision.utils.save_image(img2, resultPath1_1+'/ep%d_%d_dim.jpg'%(epoch,i), nrow=8)
