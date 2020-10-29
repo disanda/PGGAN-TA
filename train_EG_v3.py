@@ -123,8 +123,8 @@ for epoch in range(10):
 			print('loss_all__:  '+str(lossD_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 
 #Training G:
-		x = netG2(z,depth=8,alpha=1)
-		z_d = netD2(x.detach(),height=8,alpha=1)#通过D训练G
+		x_2 = netG2(z,depth=8,alpha=1)
+		z_d = netD2(x_2.detach(),height=8,alpha=1)#通过D训练G
 		z_d = z_d.squeeze(2).squeeze(2)
 		optimizerG.zero_grad()
 		loss_j = MSE_loss(z_d,z)
@@ -139,7 +139,7 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d_rc.jpg'%(epoch,i), nrow=8)
 			#测试解耦
-			z2 = torch.rand((1, 512)).expand(8, 512)
+			z2 = torch.rand((1, 512)).expand(8, 512).clone()
 			temp = torch.linspace(-4,4,8)
 			z_2_2=z2.clone()
 			z_dim = np.random.randint(in_dim)
