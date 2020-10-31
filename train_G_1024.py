@@ -197,9 +197,11 @@ for epoch in range(10):
 		optimizer.step()
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
-		if i % 100 == 0: 
+		if (i % 100)==0 | (i<20) : 
 			torchvision.utils.save_image(x, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=1)
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
+			with open(resultPath+'/Loss.txt', 'w') as f:
+				print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	#torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
