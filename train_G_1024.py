@@ -73,7 +73,7 @@ netG.load_state_dict(torch.load('./pre-model/GAN_GEN_SHADOW_8.pth',map_location=
 #netD1.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
 
 netD2 = torch.nn.DataParallel(Encoder.encoder_v1(height=9, feature_size=512))
-netD2.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
+netD2.load_state_dict(torch.load('./pre-model/AG_E_model_ep9.pth',map_location=device))
 #netD2 = torch.nn.DataParallel(Encoder.encoder_v2()) #新结构，不需要参数 
 #toggle_grad(netD1,False)
 #toggle_grad(netD2,False)
