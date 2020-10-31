@@ -197,7 +197,7 @@ for epoch in range(10):
 		optimizer.step()
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
-		if (i % 100)==0 | (i<20) : 
+		if (i % 100==0) or (i<20 and epoch==0) : 
 			torchvision.utils.save_image(x, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=1)
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'w') as f:
