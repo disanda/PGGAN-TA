@@ -188,6 +188,7 @@ loss_all=0
 for epoch in range(10):
 	for i in range(5001):
 		z = netD2(im1.detach(),height=8,alpha=1)
+		z = z.squeeze(2).squeeze(2)
 		x = netG(z,depth=8,alpha=1)
 		optimizer.zero_grad()
 		loss_i = loss(x,im1)
