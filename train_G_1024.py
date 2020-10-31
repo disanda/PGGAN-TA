@@ -178,7 +178,7 @@ def image_loader(image_name):
 	image = loader(image).unsqueeze(0)
 	return image.to(torch.float)
 
-im1=image_loader('./5.jpg')
+im1=image_loader('./5.jpg').to(device)
 
 
 # --------------training with generative image------------
