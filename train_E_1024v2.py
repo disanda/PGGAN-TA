@@ -187,7 +187,7 @@ del netD1
 
 # --------------training with generative image------------share weight: good result!------------step2:no share weight:
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
-loss_l2 = torch.nn.MSELoss()
+loss_l2 = torch.nn.MSELoss(reduce=False)
 loss_kl = torch.nn.KLDivLoss(size_average=False, reduce=False) #衡量分布
 loss_l1 = torch.nn.L1Loss()
 loss_all=0
@@ -201,10 +201,11 @@ for epoch in range(10):
 		z_ = z_.squeeze(2).squeeze(2)
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
-		loss_1 = loss_kl(x_,x).sum()
+		loss = loss_l2(x,x_).sum()
+		loss_1 = loss_kl(z,z_).sum()
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l1(z.std(),z_.std()) #稀疏
-		loss_i = 10*loss_1+0.1*loss_2+0.1*loss_3
+		loss_i = loss+0.0001*loss_1+0.1*loss_2+0.01*loss_3
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
@@ -214,7 +215,7 @@ for epoch in range(10):
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
-				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1)+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1)+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item()+'  loss:  '+str(loss.item())),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
 				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z_std:    '+str(z_.std()),file=f)
