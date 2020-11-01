@@ -12,7 +12,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/Step2_Training_G_V1"
+resultPath = "./result/Step2_Training_G_V1_pic1"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -25,18 +25,6 @@ if not os.path.exists(resultPath1_2):
     os.mkdir(resultPath1_2)
 
 #-----------------test preModel-------------------
-# netG = torch.nn.DataParallel(pg.Generator(depth=9))# in: [-1,512], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
-# netG.load_state_dict(torch.load('./pre-model/GAN_GEN_SHADOW_8.pth',map_location=device)) #shadow的效果要好一些 
-
-# netD = torch.nn.DataParallel(pg.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
-# netD.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
-
-# #print(netD)
-# x = torch.randn(1,3,1024,1024)
-# z = netD(x,height=7,alpha=1)
-# print(z.shape)
-
-#----test------
 #print(gen)
 # depth=0
 # z = torch.randn(4,512)
@@ -175,10 +163,11 @@ loader = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
 from PIL import Image
 def image_loader(image_name):
 	image = Image.open(image_name).convert('RGB')
+	image = image.resize(1024,1024)
 	image = loader(image).unsqueeze(0)
 	return image.to(torch.float)
 
-im1=image_loader('./5.jpg')
+im1=image_loader('./1.jpg')
 
 
 # --------------training with generative image------------
@@ -202,6 +191,8 @@ for epoch in range(10):
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'w') as f:
 				print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
+			with open(resultPath+'/D_z.txt', 'w') as f:
+				print('loss_all__:  '+str(z[0,0:20])+'     loss_i:    '+str(z[1,0:20]),file=f)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	#torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)

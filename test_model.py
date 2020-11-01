@@ -2,15 +2,20 @@ import torch
 import numpy as np
 import os
 import torchvision
-from pro_gan_pytorch import PRO_GAN as pg
+
+from pro_gan_pytorch import  Encoder , Networks as net
 
 
 device = 'cuda'
 
 
 #-----------------preModel-------------------
-# netG = torch.nn.DataParallel(pg.Generator(depth=9))# in: [-1,512], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
+netG = torch.nn.DataParallel(pg.Generator(depth=9))# in: [-1,512], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
 # netG.load_state_dict(torch.load('./pre-model/GAN_GEN_SHADOW_8.pth',map_location=device)) #shadow的效果要好一些 
+netG.load_state_dict(torch.load('/_yucheng/bigModel/pro-gan/PGGAN-TrainAgain/result/Step2_Training_G_V1/models/G_model_ep2.pth'))
+
+
+
 
 # netD = torch.nn.DataParallel(pg.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
 # netD.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
@@ -23,14 +28,13 @@ device = 'cuda'
 #print(gen)
 # depth=0
 # z = torch.randn(4,512)
+x = netG(z,depth=8,alpha=1)
 # x = (gen1(z,depth=depth,alpha=1)+1)/2
 # torchvision.utils.save_image(x, './face_dp%d.jpg'%depth, nrow=4)
 # del x
 # x = (gen2(z,depth=depth,alpha=1)+1)/2
 # torchvision.utils.save_image(x, './face-shadow%d.jpg'%depth, nrow=4)
 
-
-from pro_gan_pytorch import encoder
 
 netD = encoder.encoder_v1(height=9, feature_size=512)
 
