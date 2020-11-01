@@ -192,7 +192,7 @@ for epoch in range(10):
 			with open(resultPath+'/Loss.txt', 'w') as f:
 				print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'w') as f:
-				print('loss_all__:  '+str(z[0,0:20])+'     loss_i:    '+str(z[1,0:20]),file=f)
+				print('loss_all__:  '+str(z[0,0:30])+'     loss_i:    '+str(z[0,30:60]),file=f)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	#torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
