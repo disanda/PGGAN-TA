@@ -202,7 +202,8 @@ for epoch in range(10):
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
 		loss = loss_l2(x,x_)
-		loss_1 = loss_kl(z,z_)
+		#loss_1 = loss_kl(z,z_)
+		loss_1 = 0
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l1(z.std(),z_.std()) #稀疏
 		loss_i = loss+0.001*loss_1+0.1*loss_2+0.01*loss_3
