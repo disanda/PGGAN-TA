@@ -170,7 +170,7 @@ toggle_grad(netD2,True)
 # --------------training with generative image------------
 import functools
 #optimizer = torch.optim.Adam(netG.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
-optimizer = torch.optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.001 ,betas=(0, 0.99), eps=1e-8)
+optimizer = torch.optim.Adam(itertools.chain(netG.parameters(), netD2.parameters()),lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss = torch.nn.MSELoss()
 #loss = torch.nn.BCEloss()
 loss_all=0
