@@ -13,7 +13,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/RC_Training_D_V1"
+resultPath = "./result/RC_Training_D_V2"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -200,8 +200,8 @@ for epoch in range(10):
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
 		loss_i = loss(x_,x)
-		#loss_2 = loss(z.mean(),z_.mean())
-		#loss_i = loss_1+loss_2
+		loss_2 = loss(z.mean(),z_.mean())
+		loss_i = loss_1+0.1*loss_2
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
