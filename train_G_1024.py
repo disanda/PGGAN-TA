@@ -189,10 +189,10 @@ for epoch in range(10):
 		if (i % 100==0) or (i<20 and epoch==0) : 
 			torchvision.utils.save_image(x, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=1)
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
-			with open(resultPath+'/Loss.txt', 'w') as f:
+			with open(resultPath+'/Loss.txt', 'a+') as f:
 				print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
-			with open(resultPath+'/D_z.txt', 'w') as f:
-				print('loss_all__:  '+str(z[0,0:30])+'     loss_i:    '+str(z[0,30:60]),file=f)
+			with open(resultPath+'/D_z.txt', 'a+') as f:
+				print('D_z:  '+str(z[0,0:30])+'     D_z:    '+str(z[0,30:60]),file=f)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	#torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
