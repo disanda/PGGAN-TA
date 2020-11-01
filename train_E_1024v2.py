@@ -215,7 +215,7 @@ for epoch in range(10):
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
-				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1)+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item()+'  loss:  '+str(loss.item())),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1)+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item())+'  loss:  '+str(loss.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
 				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z_std:    '+str(z_.std()),file=f)
