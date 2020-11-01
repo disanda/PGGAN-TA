@@ -199,10 +199,10 @@ for epoch in range(10):
 		z_ = z_.squeeze(2).squeeze(2)
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
-		loss_1 = loss(x_,x)
+		loss_i = loss(x_,x)
 		#loss_2 = loss(z.mean(),z_.mean())
 		#loss_i = loss_1+loss_2
-		loss_1.backward()
+		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
