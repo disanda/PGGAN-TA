@@ -76,6 +76,7 @@ for i,j in netD2.named_parameters():
 
 toggle_grad(netD2,True)
 
+del D1
 
 #---------------training with true image-------------
 # optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
@@ -176,7 +177,7 @@ loss = torch.nn.MSELoss()
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
-		z = torch.randn(10, 512).to(device)
+		z = torch.randn(5, 512).to(device)
 		x = netG(z,depth=8,alpha=1)
 		z_ = netD2(x.detach(),height=8,alpha=1)
 		z_ = z_.squeeze(2).squeeze(2)
@@ -189,8 +190,8 @@ for epoch in range(10):
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
 		if (i % 100==0) or (i<20 and epoch==0) : 
-			img = (torch.cat((x[:8],x_[:8]))+1)/2
-			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
+			img = (torch.cat((x[:5],x_[:5]))+1)/2
+			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=5)
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:'+str(loss_all)+'loss_1:'+str(loss_1.item())+'loss_2:'+str(loss_2.item()),file=f)
