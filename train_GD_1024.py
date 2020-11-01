@@ -8,6 +8,7 @@ import torchvision
 from pro_gan_pytorch import  Encoder , Networks as net
 from pro_gan_pytorch.DataTools import DatasetFromFolder
 from torch.autograd import Variable
+import itertools
 
 #device = 'cuda'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
