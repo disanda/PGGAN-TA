@@ -1,4 +1,5 @@
 #这是训练完D后的第二步，这里需要训练G,让其能生成对应的真实图片,考虑两类loss，原ganLoss, MSE-Loss
+#控制编码，让其和分布接近
 
 import torch
 import numpy as np
@@ -12,7 +13,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/Step2_Training_G_V1_pic1"
+resultPath = "./result/Step2_Training_EG_V1"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -57,27 +58,22 @@ def toggle_grad(model, requires_grad):
 
 netG = torch.nn.DataParallel(net.Generator(depth=9,latent_size=512))# in: [-1,512], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
 netG.load_state_dict(torch.load('./pre-model/GAN_GEN_SHADOW_8.pth',map_location=device)) #shadow的效果要好一些 
-#netD1 = torch.nn.DataParallel(net.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
-#netD1.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
+netD1 = torch.nn.DataParallel(net.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
+netD1.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
 
 netD2 = torch.nn.DataParallel(Encoder.encoder_v1(height=9, feature_size=512))
-netD2.load_state_dict(torch.load('./pre-model/AG_E_model_ep9.pth',map_location=device))
+#netD2.load_state_dict(torch.load('./pre-model/AG_E_model_ep9.pth',map_location=device))
 #netD2 = torch.nn.DataParallel(Encoder.encoder_v2()) #新结构，不需要参数 
-#toggle_grad(netD1,False)
-#toggle_grad(netD2,False)
+toggle_grad(netD1,False)
+toggle_grad(netD2,False)
 
-#toggle_grad(netD2,False)
+paraDict = dict(netD1.named_parameters()) # pre_model weight dict
+for i,j in netD2.named_parameters():
+	if i in paraDict.keys():
+		w = paraDict[i]
+		j.copy_(w)
 
-# x = torch.randn(1,3,1024,1024)
-# z = netD2(x,height=8,alpha=1)
-# z = z.squeeze(2).squeeze(2)
-# print(z.shape)
-# x_r = netG(z,depth=8,alpha=1)
-# print(x_r.shape)
-
-# z = torch.randn(5,512)
-# x = (netG(z,depth=8,alpha=1)+1)/2
-# torchvision.utils.save_image(x, './recons.jpg', nrow=5)
+toggle_grad(netD2,True)
 
 
 #---------------training with true image-------------
@@ -171,29 +167,35 @@ netD2.load_state_dict(torch.load('./pre-model/AG_E_model_ep9.pth',map_location=d
 
 
 # --------------training with generative image------------
-optimizer = torch.optim.Adam(netG.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
+import functools
+#optimizer = torch.optim.Adam(netG.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
+optimizer = torch.optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss = torch.nn.MSELoss()
+#loss = torch.nn.BCEloss()
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
-		im1 = im1.to(device)
-		z = netD2(im1.detach(),height=8,alpha=1)
-		z = z.squeeze(2).squeeze(2)
+		z = torch.randn(10, 512).to(device)
 		x = netG(z,depth=8,alpha=1)
+		z_ = netD2(x.detach(),height=8,alpha=1)
+		z_ = z_.squeeze(2).squeeze(2)
+		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
-		loss_1 = loss(x,im1)
-		loss_2 = loss(z.std(),)
+		loss_1 = loss(x,x_)
+		loss_2 = loss(z.mean(),z_.mean())
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
 		if (i % 100==0) or (i<20 and epoch==0) : 
-			torchvision.utils.save_image(x, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=1)
+			img = (torch.cat((x[:8],x_[:8]))+1)/2
+			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			#torchvision.utils.save_image(x_[:8], resultPath1_1+'/%d_rc.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
-				print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:'+str(loss_all)+'loss_1:'+str(loss_1.item())+'loss_2:'+str(loss_2.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
-				print('D_z:  '+str(z[0,0:30])+'     D_z:    '+str(z[0,30:60]),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z_std:    '+str(z_.std()),file=f)
 	#if epoch%10==0 or epoch == 29:
 	torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	#torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)

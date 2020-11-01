@@ -210,9 +210,10 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
-				print(str(epoch)+'-'+str(i)+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
-				print(str(epoch)+'-'+str(i)+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z:    '+str(z_.std()),file=f)
 	#if epoch%10==0 or epoch == 29:
 	#torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
