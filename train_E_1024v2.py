@@ -85,7 +85,7 @@ for i,j in netD2.named_parameters():
 		j.copy_(w)
 
 toggle_grad(netD2,True)
-del D1
+del netD1
 
 # x = torch.randn(1,3,1024,1024)
 # z = netD2(x,height=8,alpha=1)
