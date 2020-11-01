@@ -13,7 +13,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/RC_Training_D_V2"
+resultPath = "./result/RC_Training_D_V3"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -201,7 +201,8 @@ for epoch in range(10):
 		optimizer.zero_grad()
 		loss_1 = loss(x_,x)
 		loss_2 = loss(z.mean(),z_.mean())
-		loss_i = loss_1+0.1*loss_2
+		loss_3 = loss(z.std(),z_.std())
+		loss_i = loss_1+0.5*loss_2+0.5*loss_3
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
@@ -213,7 +214,7 @@ for epoch in range(10):
 				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
-				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z:    '+str(z_.std()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z_std:    '+str(z_.std()),file=f)
 	#if epoch%10==0 or epoch == 29:
 	#torch.save(netG.state_dict(), resultPath1_2+'/G_model_ep%d.pth'%epoch)
 	torch.save(netD2.state_dict(), resultPath1_2+'/D_model_ep%d.pth'%epoch)
