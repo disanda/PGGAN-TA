@@ -189,7 +189,7 @@ del netD1
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss_l2 = torch.nn.MSELoss()
 loss_kl = torch.nn.KLDivLoss(size_average=False, reduce=False) #衡量分布
-loll_l1 = torch.nn.L1Loss()
+loss_l1 = torch.nn.L1Loss()
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
