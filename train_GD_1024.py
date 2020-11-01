@@ -76,7 +76,7 @@ for i,j in netD2.named_parameters():
 
 toggle_grad(netD2,True)
 
-del D1
+del netD1
 
 #---------------training with true image-------------
 # optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
