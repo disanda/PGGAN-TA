@@ -163,7 +163,7 @@ loader = torchvision.transforms.Compose([torchvision.transforms.ToTensor()])
 from PIL import Image
 def image_loader(image_name):
 	image = Image.open(image_name).convert('RGB')
-	image = image.resize(1024,1024)
+	image = image.resize((1024,1024))
 	image = loader(image).unsqueeze(0)
 	return image.to(torch.float)
 
