@@ -85,6 +85,7 @@ for i,j in netD2.named_parameters():
 		j.copy_(w)
 
 toggle_grad(netD2,True)
+del D1
 
 # x = torch.randn(1,3,1024,1024)
 # z = netD2(x,height=8,alpha=1)
@@ -190,7 +191,7 @@ loss = torch.nn.MSELoss()
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
-		z = torch.randn(10, 512).to(device)
+		z = torch.randn(8, 512).to(device)
 		with torch.no_grad():
 			x = netG(z,depth=8,alpha=1)
 		z_ = netD2(x.detach(),height=8,alpha=1)
