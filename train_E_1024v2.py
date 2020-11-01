@@ -13,7 +13,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/RC_Training_GD_V1"
+resultPath = "./result/RC_Training_D_V2"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
