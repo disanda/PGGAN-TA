@@ -188,8 +188,8 @@ del netD1
 # --------------training with generative image------------share weight: good result!------------step2:no share weight:
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss_l2 = torch.nn.MSELoss()
-loss_kl = nn.KLDivLoss(size_average=False, reduce=False) #衡量分布
-loll_l1 = nn.L1Loss()
+loss_kl = torch.nn.KLDivLoss(size_average=False, reduce=False) #衡量分布
+loll_l1 = tirch.nn.L1Loss()
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
