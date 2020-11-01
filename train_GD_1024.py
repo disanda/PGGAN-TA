@@ -185,7 +185,7 @@ for epoch in range(10):
 		optimizer.zero_grad()
 		loss_1 = loss(x,x_)
 		loss_2 = loss(z.mean(),z_.mean())
-		loss_i =lose_1 + loss_2
+		loss_i =loss_1 + loss_2
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
