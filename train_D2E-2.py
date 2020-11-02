@@ -62,7 +62,8 @@ for epoch in range(10):
 		im1 = im1.to(device)
 		z = netE(im1.detach(),height=8,alpha=1)
 		z = z.squeeze(2).squeeze(2)
-		x = netG(z,depth=8,alpha=1)
+		with torch.no_grad():
+			x = netG(z,depth=8,alpha=1)
 		optimizer.zero_grad()
 		loss_i = loss(x,im1)
 		loss_i.backward()
