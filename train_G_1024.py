@@ -1,4 +1,5 @@
 #这是训练完D后的第二步，这里需要训练G,让其能生成对应的真实图片,考虑两类loss，原ganLoss, MSE-Loss
+#这还是
 
 import torch
 import numpy as np
