@@ -13,7 +13,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/RC_Training_D_V3_2"
+resultPath = "./result/RC_Training_D_V3_stdl2"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -189,7 +189,7 @@ del netD1
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss_l2 = torch.nn.MSELoss()
 loss_kl = torch.nn.KLDivLoss() #衡量分布
-loss_l1 = torch.nn.L1Loss()
+loss_l1 = torch.nn.L1Loss() #稀疏
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
@@ -205,7 +205,7 @@ for epoch in range(10):
 		#loss_1 = loss_kl(z,z_)
 		loss_1 = 0
 		loss_2 = loss_l2(z.mean(),z_.mean())
-		loss_3 = loss_l1(z.std(),z_.std()) #稀疏
+		loss_3 = loss_l2(z.std(),z_.std()) 
 		loss_i = loss+0.001*loss_2+0.001*loss_3
 		loss_i.backward()
 		optimizer.step()
