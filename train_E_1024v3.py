@@ -203,8 +203,10 @@ for epoch in range(10):
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
 		loss = loss_l2(x,x_)
-		y1,y2 = torch.nn.functional.softmax(z_),torch.nn.functional.softmax(z)
+		y1,y2 = torch.nn.functional.softmax(x_),torch.nn.functional.softmax(x)
 		loss_1 = loss_kl(torch.log(y1),y2)
+		loss_1 = torch.where(torch.isnan(loss_1), torch.full_like(loss_1, 0), loss_1)
+		loss_1 = torch.where(torch.isinf(loss_1), torch.full_like(loss_1, 1), loss_1)
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l2(z.std(),z_.std()) 
 		loss_i = loss+loss_1+0.001*loss_2+0.001*loss_3
