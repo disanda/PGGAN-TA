@@ -206,7 +206,7 @@ for epoch in range(10):
 		loss_1 = loss_fn_vgg(x, x_)
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l2(z.std(),z_.std()) 
-		loss_i = loss_1+0.001*loss_2+0.001*loss_3
+		loss_i = loss_1.mean()+0.001*loss_2+0.001*loss_3
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
