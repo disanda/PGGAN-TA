@@ -195,7 +195,7 @@ loss_l1 = torch.nn.L1Loss() #稀疏
 loss_all=0
 for epoch in range(10):
 	for i in range(5001):
-		z = torch.randn(6, 512).to(device)
+		z = torch.randn(4, 512).to(device)
 		with torch.no_grad():
 			x = netG(z,depth=8,alpha=1)
 		z_ = netD2(x.detach(),height=8,alpha=1)
@@ -212,8 +212,8 @@ for epoch in range(10):
 		loss_all +=loss_i.item()
 		print('loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()))
 		if i % 100 == 0: 
-			img = (torch.cat((x[:6],x_[:6]))+1)/2
-			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=6)
+			img = (torch.cat((x[:4],x_[:4]))+1)/2
+			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=4)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
 				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1.item())+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item()),file=f)
