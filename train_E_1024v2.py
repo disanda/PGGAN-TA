@@ -187,7 +187,7 @@ del netD1
 
 # --------------training with generative image------------share weight: good result!------------step2:no share weight:
 import lpips
-loss_fn_vgg = lpips.LPIPS(net='vgg')
+loss_fn_vgg = lpips.LPIPS(net='vgg').to(device)
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss_l2 = torch.nn.MSELoss()
 loss_kl = torch.nn.KLDivLoss() #衡量分布
@@ -203,7 +203,7 @@ for epoch in range(10):
 		z_ = z_.squeeze(2).squeeze(2)
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
-		loss_1 = d = loss_fn_vgg(x, x_)
+		loss_1 = loss_fn_vgg(x, x_)
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l2(z.std(),z_.std()) 
 		loss_i = loss_1+0.001*loss_2+0.001*loss_3
