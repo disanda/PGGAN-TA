@@ -1,6 +1,7 @@
 #这个版本只需要导入网络即可(不需要导入训练网络)，先已完成两个实验，第一个实验完成gt编码的比较，第二个实验完成G(z)的编码比较
 #准备做 不同网络的比较，包括结构不同，weight不同的情况 (mnist中以上因素不同，区别不大)
-#改进loss，拉近D(z)到原点的距离
+#改进loss，拉近D(z)到原点的距离, mu/sigma
+#改进loss，让D(x)的分布和z的分布接近
 import torch
 import numpy as np
 import os
@@ -13,7 +14,7 @@ from torch.autograd import Variable
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #----------------path setting---------------
-resultPath = "./result/RC_Training_D_perceptual"
+resultPath = "./result/RC_Training_D_V4_stdl2_kl"
 if not os.path.exists(resultPath):
     os.mkdir(resultPath)
 
@@ -186,8 +187,6 @@ del netD1
 
 
 # --------------training with generative image------------share weight: good result!------------step2:no share weight:
-import lpips
-loss_fn_vgg = lpips.LPIPS(net='vgg')
 optimizer = torch.optim.Adam(netD2.parameters(), lr=0.001 ,betas=(0, 0.99), eps=1e-8)
 loss_l2 = torch.nn.MSELoss()
 loss_kl = torch.nn.KLDivLoss() #衡量分布
@@ -203,10 +202,14 @@ for epoch in range(10):
 		z_ = z_.squeeze(2).squeeze(2)
 		x_ = netG(z_,depth=8,alpha=1)
 		optimizer.zero_grad()
-		loss_1 = d = loss_fn_vgg(x, x_)
+		loss = loss_l2(x,x_)
+		y1,y2 = torch.nn.functional.softmax(x_),torch.nn.functional.softmax(x)
+		loss_1 = loss_kl(torch.log(y1),y2)
+		loss_1 = torch.where(torch.isnan(loss_1), torch.full_like(loss_1, 0), loss_1)
+		loss_1 = torch.where(torch.isinf(loss_1), torch.full_like(loss_1, 1), loss_1)
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l2(z.std(),z_.std()) 
-		loss_i = loss_1+0.001*loss_2+0.001*loss_3
+		loss_i = loss+loss_1+0.001*loss_2+0.001*loss_3
 		loss_i.backward()
 		optimizer.step()
 		loss_all +=loss_i.item()
@@ -215,8 +218,8 @@ for epoch in range(10):
 			img = (torch.cat((x[:8],x_[:8]))+1)/2
 			torchvision.utils.save_image(img, resultPath1_1+'/ep%d_%d.jpg'%(epoch,i), nrow=8)
 			with open(resultPath+'/Loss.txt', 'a+') as f:
-				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_i:    '+str(loss_i.item()),file=f)
-				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1.item())+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_all__:  '+str(loss_all)+'     loss_all:    '+str(loss_i.item()),file=f)
+				print(str(epoch)+'-'+str(i)+'-'+'loss_1:  '+str(loss_1)+'  loss_2:  '+str(loss_2.item())+'  loss_3:  '+str(loss_3.item())+'  loss:  '+str(loss.item()),file=f)
 			with open(resultPath+'/D_z.txt', 'a+') as f:
 				print(str(epoch)+'-'+str(i)+'-'+'D_z:  '+str(z_[0,0:30])+'     D_z:    '+str(z_[0,30:60]),file=f)
 				print(str(epoch)+'-'+str(i)+'-'+'D_z_mean:  '+str(z_.mean())+'     D_z_std:    '+str(z_.std()),file=f)
