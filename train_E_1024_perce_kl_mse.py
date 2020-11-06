@@ -207,8 +207,8 @@ for epoch in range(20):
 		loss_1_2 = loss_l2(x,x_)
 		y1,y2 = torch.nn.functional.softmax(x_),torch.nn.functional.softmax(x)
 		loss_1_3 = loss_kl(torch.log(y1),y2)
-		loss_1_3 = torch.where(torch.isnan(loss_1), torch.full_like(loss_1, 0), loss_1)
-		loss_1_3 = torch.where(torch.isinf(loss_1), torch.full_like(loss_1, 1), loss_1)
+		loss_1_3 = torch.where(torch.isnan(loss_1_3), torch.full_like(loss_1, 0), loss_1_3)
+		loss_1_3 = torch.where(torch.isinf(loss_1_3), torch.full_like(loss_1, 1), loss_1_3)
 		loss_2 = loss_l2(z.mean(),z_.mean())
 		loss_3 = loss_l2(z.std(),z_.std()) 
 		loss_1 = loss_1_1+loss_1_2+loss_1_3
