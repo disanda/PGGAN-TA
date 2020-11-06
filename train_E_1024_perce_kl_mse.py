@@ -70,23 +70,23 @@ def toggle_grad(model, requires_grad):
 
 netG = torch.nn.DataParallel(net.Generator(depth=9,latent_size=512))# in: [-1,512], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
 netG.load_state_dict(torch.load('./pre-model/GAN_GEN_SHADOW_8.pth',map_location=device)) #shadow的效果要好一些 
-netD1 = torch.nn.DataParallel(net.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
+#netD1 = torch.nn.DataParallel(net.Discriminator(height=9, feature_size=512))# in: [-1,3,1024,1024],out:[], depth:0-4,1-8,2-16,3-32,4-64,5-128,6-256,7-512,8-1024
 #netD1.load_state_dict(torch.load('./pre-model/GAN_DIS_8.pth',map_location=device))
-netD1.load_state_dict(torch.load('/_yucheng/bigModel/pro-gan/PGGAN-TrainAgain/result/RC_Training_D_perceptual/models/D_model_ep9.pth',map_location=device))
+
 
 netD2 = torch.nn.DataParallel(Encoder.encoder_v1(height=9, feature_size=512))
 #netD2 = torch.nn.DataParallel(Encoder.encoder_v2()) #新结构，不需要参数 
-toggle_grad(netD1,False)
-toggle_grad(netD2,False)
+netD2.load_state_dict(torch.load('/_yucheng/bigModel/pro-gan/PGGAN-TrainAgain/result/RC_Training_D_perceptual/models/D_model_ep9.pth',map_location=device))
 
-paraDict = dict(netD1.named_parameters()) # pre_model weight dict
-for i,j in netD2.named_parameters():
-	if i in paraDict.keys():
-		w = paraDict[i]
-		j.copy_(w)
-
-toggle_grad(netD2,True)
-del netD1
+# toggle_grad(netD1,False)
+# toggle_grad(netD2,False)
+# paraDict = dict(netD1.named_parameters()) # pre_model weight dict
+# for i,j in netD2.named_parameters():
+# 	if i in paraDict.keys():
+# 		w = paraDict[i]
+# 		j.copy_(w)
+# toggle_grad(netD2,True)
+# del netD1
 
 # x = torch.randn(1,3,1024,1024)
 # z = netD2(x,height=8,alpha=1)
